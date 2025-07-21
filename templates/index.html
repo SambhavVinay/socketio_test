@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask SocketIO Chat</title>
+</head>
+<body>
+    <h1>Flask SocketIO Chat</h1>
+    <ul id="messages"></ul>
+    <input id="myMessage" autocomplete="off"><button onclick="sendMessage()">Send</button>
+
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <script type="text/javascript">
+        const socket = io();
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('message', function(msg) {
+            const item = document.createElement('li');
+            item.textContent = msg;
+            document.getElementById('messages').appendChild(item);
+        });
+
+        function sendMessage() {
+            const input = document.getElementById("myMessage");
+            const msg = input.value;
+            socket.send(msg);
+            input.value = "";
+        }
+    </script>
+</body>
+</html>

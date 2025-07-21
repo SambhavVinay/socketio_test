@@ -1,21 +1,22 @@
+import eventlet
+eventlet.monkey_patch()
+
 from flask import Flask, render_template
 from flask_socketio import SocketIO, send
-import eventlet
-eventlet.monkey_patch()  # <-- Add this line at the top
+import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "jhqsfi"
-socketio = SocketIO(app)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'defaultsecret')
+socketio = SocketIO(app, cors_allowed_origins="*")
 
-@app.route("/")
-def home():
-    return render_template("home.html")
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-@socketio.on("message")
+@socketio.on('message')
 def handle_message(msg):
-    print("received message : " + msg)
+    print('Message:', msg)
     send(msg, broadcast=True)
 
-# Remove this block — Render won't use it
-# if __name__ == "__main__":
-#     socketio.run(app, debug=True)
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', port=10000)
