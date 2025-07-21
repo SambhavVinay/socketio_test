@@ -1,5 +1,7 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, render_template
 from flask_socketio import SocketIO, send
+import eventlet
+eventlet.monkey_patch()  # <-- Add this line at the top
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "jhqsfi"
@@ -11,8 +13,9 @@ def home():
 
 @socketio.on("message")
 def handle_message(msg):
-    print("received message : "+ msg)
-    send(msg, broadcast = True)
+    print("received message : " + msg)
+    send(msg, broadcast=True)
 
-if __name__ == "__main__":
-    socketio.run(app, debug=True)
+# Remove this block — Render won't use it
+# if __name__ == "__main__":
+#     socketio.run(app, debug=True)
